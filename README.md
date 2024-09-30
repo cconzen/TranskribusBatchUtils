@@ -1,93 +1,89 @@
-# Transkribus PageXML Updater
+# Transkribus Batch Utils
 
-This Python script automates the process of updating one or multiple documents in Transkribus by exchanging their PageXML files. 
-It interacts with the Transkribus REST-API to log in, retrieve documents, and update the XML content of specific pages within a collection.
+This project provides Python scripts to interact with the [Transkribus REST API](https://readcoop.eu/transkribus/docu/rest-api/). 
 
 ## Features
 
-- Login to Transkribus: Authenticates using your Transkribus credentials to obtain a session ID.
-- Fetch Full Document Metadata: Retrieves the full metadata for a document from Transkribus.
-- Update Page XML: Updates individual PageXML files for each page in a document, allowing batch updates for multiple pages.
-- Batch Processing: Loops through documents in a directory and updates the corresponding PageXML files based on metadata and document IDs.
+- **Batch Upload**: Upload multiple documents and their PageXMLs to a specified Transkribus collection.
+- **Batch Update**: Update PageXMLs/transcriptions of documents already in a Transkribus collection.
   
-## Requirements
+## Prerequisites
 
-- Python 3.x
-- requests library
+- Python 3.7+
+- An active Transkribus account
 
-You can install the required libraries using:
+## Installation
 
-```
-pip install requests
-```
+1. Clone the repository:
 
-Clone the repository:
+   ```
+   git clone https://github.com/cconzen/TranskribusBatchUtils.git
+   cd TranskribusBatchUtils
+   ```
+2. Install required dependencies:
+   
+   ```
+   pip install -r requirements.txt
+   ```
+3. Set up your Transkribus Log in credentials in an ```.env``` file:
+   ```
+   TRANSKRIBUS_USER=<user@email.com>
+   TRANSKRIBUS_PASSWORD=<password>
+   ```
 
-```
-git clone https://github.com/cconzen/TranskribusUpdatePageXML.git
-```
+# Usage
+## Batch Upload Documents
 
-### Edit the script:
+To upload a directory of documents to a Transkribus collection, use the following command:
 
-Open the script and update the following placeholders with your actual Transkribus account details and document information:
+   ```
+   python main.py upload <base_directory> <collection_id>
+   ```
 
-- **collection_id**: The ID of the collection in Transkribus.
-- **doc_id**: The document ID (if updating only one document).
-- **username**: Your Transkribus account email.
-- **password**: Your Transkribus account password.
-- **status**: The status the document should be after you updated the XML (default: IN_PROGRESS).
+_<base_directory>_: The base directory that contains the documents.
 
-### Set Base Directory:
+_<collection_id>_: The Transkribus collection ID to which you want to upload the documents.
 
-Update the base_dir variable to point to the base directory where your XML and metadata files are stored locally.
+## Batch Update Documents
 
-### Run the script:
+To update the PageXMLs of all documents in a Transkribus collection, use:
 
-Use the following command to execute the script:
+   ```
+  python main.py update <base_directory> <collection_id>
+   ```
 
-```
-python transkribus_updater.py
-```
-The script will log in to Transkribus, fetch the document metadata, and update the corresponding PageXML files for each page based on the content of your local XML files.
+_<base_directory>_: The base directory that contains the documents.
 
-### Script Details
+_<collection_id>_: The Transkribus collection ID to which you want to upload the documents.
 
-**login_transkribus()**
+## Example Command
 
-Logs into the Transkribus API and retrieves a session ID.
+   ```
+   python main.py upload documents 12345
+   ```
 
-**get_full_document()**
-
-Fetches the full metadata of a document using the document ID.
-
-**load_xml()**
-
-Loads the content of a local XML file from a given path.
-
-**update_page_xml()**
-
-Updates the XML content of a specific page in Transkribus.
-
-**batch_update_document_xmls()**
-
-Batch processes all documents in the specified base directory, updating the PageXML for each page.
+This will upload the contents of the ```documents``` directory to the collection with ID 12345.
 
 ## Example Directory Structure
+
 Make sure your base directory follows this structure for the script to work properly:
 
-```
-/BASE_DIR/
-    /Document_1/
-        metadata.xml
-        /page/
-            Page_1.xml
-            Page_2.xml
-    /Document_2/
-        metadata.xml
-        /page/
-            Page_1.xml
-            Page_2.xml
-```
+(metadata.xml is only required for updating existing Transkribus documents; it should be automatically created when exporting from Transkribus)
+
+    ```
+    /BASE_DIR/
+        /Document_1/
+            metadata.xml
+            /page/
+                Page_1.xml
+                Page_2.xml
+        /Document_2/
+            metadata.xml
+            /page/
+                Page_1.xml
+                Page_2.xml
+        ...
+    ```
 
 # License
 This project is licensed under the MIT License.
